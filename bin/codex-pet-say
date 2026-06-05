@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PET_HOME="${CODEX_DESKTOP_PET_HOME:-/Volumes/ssd/work/codex-desktop-pet}"
+NODE_BIN="${NODE:-node}"
+
+cd "$PET_HOME"
+exec "$NODE_BIN" scripts/say.js "$@"

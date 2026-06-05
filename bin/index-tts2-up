@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+codex_home="$(cd "${script_dir}/.." && pwd)"
+server_root="${CODEX_SERVER_ROOT:-/Volumes/ssd/servers}"
+service_root="${VOICE_TTS_HOME:-${server_root}/voice-tts}"
+codex_bin="${CODEX_BIN_DIR:-${codex_home}/bin}"
+index_repo="${INDEX_TTS_REPO:-${codex_bin}/index-tts}"
+venv_python="$index_repo/.venv/bin/python"
+pid_file="$service_root/index-tts2.pid"
+log_file="${INDEX_TTS2_LOG_FILE:-$service_root/logs/index-tts2-service.log}"
+err_file="${INDEX_TTS2_ERR_FILE:-$service_root/logs/index-tts2-service.err.log}"
+host="${INDEX_TTS2_HOST:-127.0.0.1}"
+port="${INDEX_TTS2_PORT:-49231}"
+
+mkdir -p "$service_root/logs" "$service_root/outputs/index-tts2"
+
+if [[ -f "$pid_file" ]]; then
+  old_pid="$(cat "$pid_file")"
+  if [[ -n "$old_pid" ]] && kill -0 "$old_pid" >/dev/null 2>&1 && ps -p "$old_pid" -o stat= | grep -qv Z; then
+    echo "IndexTTS2 service already running: $old_pid"
+    exit 0
+  fi
+  rm -f "$pid_file"
+fi
+
+if [[ ! -x "$venv_python" ]]; then
+  echo "IndexTTS2 python env missing: $venv_python" >&2
+  exit 1
+fi
+
+printf '\n[index-tts2] %s starting\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" >>"$log_file"
+cd "$index_repo"
+nohup env HF_HUB_CACHE="$index_repo/checkpoints/hf_cache" \
+  "$venv_python" "$codex_bin/index-tts2-service.py" \
+    --host "$host" \
+    --port "$port" \
+    "$@" >>"$log_file" 2>>"$err_file" </dev/null &
+pid="$!"
+echo "$pid" >"$pid_file"
+
+for _ in {1..120}; do
+  if ! kill -0 "$pid" >/dev/null 2>&1 || ps -p "$pid" -o stat= | grep -q Z; then
+    echo "IndexTTS2 service exited during startup. Logs: $log_file $err_file" >&2
+    tail -n 80 "$log_file" >&2 || true
+    tail -n 80 "$err_file" >&2 || true
+    rm -f "$pid_file"
+    exit 1
+  fi
+  if curl -fsS "http://$host:$port/health" >/dev/null 2>&1; then
+    echo "IndexTTS2 service started: $pid"
+    exit 0
+  fi
+  sleep 1
+done
+
+echo "IndexTTS2 service is still loading: $pid"
+echo "Health will be available at http://$host:$port/health"

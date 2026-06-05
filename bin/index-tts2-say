@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+host="${INDEX_TTS2_HOST:-127.0.0.1}"
+port="${INDEX_TTS2_PORT:-49231}"
+output="${INDEX_TTS2_OUTPUT:-}"
+play=1
+text_parts=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --output|-o)
+      output="${2:-}"
+      shift 2
+      ;;
+    --no-play)
+      play=0
+      shift
+      ;;
+    --help|-h)
+      cat <<'USAGE'
+Usage: index-tts2-say [--output path] [--no-play] <text>
+
+Sends text to the local IndexTTS2 service and plays the generated wav with afplay.
+USAGE
+      exit 0
+      ;;
+    *)
+      text_parts+=("$1")
+      shift
+      ;;
+  esac
+done
+
+text="${text_parts[*]}"
+if [[ -z "$text" ]]; then
+  if [[ -t 0 ]]; then
+    echo "text is required" >&2
+    exit 1
+  fi
+  text="$(cat)"
+fi
+
+payload="$(TEXT="$text" OUTPUT="$output" python3 - <<'PY'
+import json
+import os
+
+payload = {"text": os.environ["TEXT"]}
+output = os.environ.get("OUTPUT")
+if output:
+    payload["output_path"] = output
+print(json.dumps(payload, ensure_ascii=False))
+PY
+)"
+
+response="$(curl -fsS \
+  -H 'content-type: application/json' \
+  --data "$payload" \
+  "http://$host:$port/synthesize")"
+
+wav="$(RESPONSE="$response" python3 - <<'PY'
+import json
+import os
+
+print(json.loads(os.environ["RESPONSE"])["output_path"])
+PY
+)"
+
+if [[ "$play" == "1" ]]; then
+  afplay "$wav"
+fi
+
+echo "$wav"

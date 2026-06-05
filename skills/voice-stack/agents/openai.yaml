@@ -1,0 +1,4 @@
+interface:
+  display_name: "Voice Stack"
+  short_description: "Operate Codex speech, ASR, and QQ voice"
+  default_prompt: "Use $voice-stack to make Codex speak, transcribe audio, or send a voice reply through QQ."

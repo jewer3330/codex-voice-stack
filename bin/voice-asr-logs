@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SERVER_ROOT="${CODEX_SERVER_ROOT:-/Volumes/ssd/servers}"
+VOICE_ASR_HOME="${VOICE_ASR_HOME:-${SERVER_ROOT}/voice-asr}"
+cd "$VOICE_ASR_HOME"
+docker compose logs -f --tail="${VOICE_ASR_LOG_TAIL:-120}" voice-asr

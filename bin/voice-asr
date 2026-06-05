@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BASE_URL="${VOICE_ASR_BASE_URL:-http://127.0.0.1:19135}"
+API_KEY="${VOICE_ASR_API_KEY:-voice-asr-local}"
+MODEL="${VOICE_ASR_MODEL:-whisper-1}"
+LANGUAGE="${VOICE_ASR_LANGUAGE:-zh}"
+RESPONSE_FORMAT="${VOICE_ASR_RESPONSE_FORMAT:-json}"
+TIMEOUT="${VOICE_ASR_TIMEOUT:-180}"
+PROMPT="${VOICE_ASR_PROMPT:-以下是普通话语音，常见词包括：大管家、语音识别、噪音、服务、compose、CLI、部署。}"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  voice-asr FILE [--language zh|en|auto] [--model MODEL] [--base-url URL] [--raw]
+  voice-asr --health
+
+Environment:
+  VOICE_ASR_BASE_URL          default: http://127.0.0.1:19135
+  VOICE_ASR_API_KEY           default: voice-asr-local
+  VOICE_ASR_MODEL             default: whisper-1
+  VOICE_ASR_LANGUAGE          default: zh
+  VOICE_ASR_RESPONSE_FORMAT   default: json
+  VOICE_ASR_TIMEOUT           default: 180
+  VOICE_ASR_PROMPT            default: Chinese remote-control vocabulary
+EOF
+}
+
+health=0
+raw=0
+audio_file=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --health)
+      health=1
+      shift
+      ;;
+    --base-url)
+      BASE_URL="${2:?missing value for --base-url}"
+      shift 2
+      ;;
+    --model)
+      MODEL="${2:?missing value for --model}"
+      shift 2
+      ;;
+    --api-key)
+      API_KEY="${2:?missing value for --api-key}"
+      shift 2
+      ;;
+    --language)
+      LANGUAGE="${2:?missing value for --language}"
+      shift 2
+      ;;
+    --response-format)
+      RESPONSE_FORMAT="${2:?missing value for --response-format}"
+      shift 2
+      ;;
+    --prompt)
+      PROMPT="${2:?missing value for --prompt}"
+      shift 2
+      ;;
+    --raw)
+      raw=1
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      echo "voice-asr: unknown option: $1" >&2
+      usage >&2
+      exit 2
+      ;;
+    *)
+      if [[ -n "$audio_file" ]]; then
+        echo "voice-asr: only one audio file is supported" >&2
+        exit 2
+      fi
+      audio_file="$1"
+      shift
+      ;;
+  esac
+done
+
+if [[ "$health" == "1" ]]; then
+  curl --fail --silent --show-error --max-time 10 "$BASE_URL/health" || {
+    echo
+    curl --fail --silent --show-error --max-time 10 "$BASE_URL/"
+  }
+  echo
+  exit 0
+fi
+
+if [[ -z "$audio_file" ]]; then
+  usage >&2
+  exit 2
+fi
+
+if [[ ! -f "$audio_file" ]]; then
+  echo "voice-asr: file not found: $audio_file" >&2
+  exit 1
+fi
+
+args=(
+  --fail
+  --silent
+  --show-error
+  --max-time "$TIMEOUT"
+  -X POST "$BASE_URL/v1/audio/transcriptions"
+  -F "model=$MODEL"
+  -F "response_format=$RESPONSE_FORMAT"
+  -F "file=@${audio_file}"
+)
+
+if [[ -n "$API_KEY" ]]; then
+  args+=(-H "Authorization: Bearer $API_KEY")
+fi
+
+if [[ "$LANGUAGE" != "auto" && -n "$LANGUAGE" ]]; then
+  args+=(-F "language=$LANGUAGE")
+fi
+
+if [[ -n "$PROMPT" ]]; then
+  args+=(-F "prompt=$PROMPT")
+fi
+
+response="$(curl "${args[@]}")"
+if [[ "$raw" == "1" ]]; then
+  printf '%s\n' "$response"
+elif command -v jq >/dev/null 2>&1; then
+  text="$(jq -r '.text // .transcription // .message // .' <<<"$response")"
+  python3 - "$text" <<'PY'
+import sys
+
+text = sys.argv[1]
+table = str.maketrans({
+    "語": "语",
+    "識": "识",
+    "別": "别",
+    "測": "测",
+    "試": "试",
+    "與": "与",
+    "時": "时",
+    "聲": "声",
+    "聽": "听",
+    "後": "后",
+    "這": "这",
+    "個": "个",
+    "對": "对",
+    "話": "话",
+    "開": "开",
+    "關": "关",
+    "復": "复",
+    "務": "务",
+    "處": "处",
+    "嗎": "吗",
+    "為": "为",
+    "進": "进",
+    "狀": "状",
+    "態": "态",
+    "還": "还",
+    "沒": "没",
+})
+print(text.translate(table))
+PY
+else
+  printf '%s\n' "$response"
+fi

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+server_root="${CODEX_SERVER_ROOT:-/Volumes/ssd/servers}"
+service_root="${VOICE_TTS_HOME:-${server_root}/voice-tts}"
+log_dir="$service_root/logs"
+log_file="$log_dir/index-tts2-service.log"
+err_file="$log_dir/index-tts2-service.err.log"
+
+if [[ "${1:-}" == "--errors" ]]; then
+  exec tail -f "$err_file"
+fi
+
+tail -n "${1:-120}" "$log_file" "$err_file"

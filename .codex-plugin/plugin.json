@@ -1,0 +1,37 @@
+{
+  "name": "codex-voice-stack",
+  "version": "0.1.0",
+  "description": "Codex speech stack for local TTS, ASR, desktop pet speech, and QQ voice delivery.",
+  "author": {
+    "name": "Codex Local"
+  },
+  "repository": "https://github.com/jewer3330/codex-voice-stack",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "voice",
+    "tts",
+    "asr",
+    "qq",
+    "live2d"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex Voice Stack",
+    "shortDescription": "Operate Codex speech, ASR, and QQ voice",
+    "longDescription": "Provides local speech-to-text, Kokoro TTS, warmed IndexTTS2 service wrappers, desktop pet speech routing, and QQ voice message delivery.",
+    "developerName": "Codex Local",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Audio",
+      "Automation"
+    ],
+    "defaultPrompt": [
+      "Make Codex speak this reply.",
+      "Transcribe this audio file.",
+      "Send this answer to QQ as voice."
+    ]
+  }
+}
+

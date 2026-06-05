@@ -1,0 +1,11 @@
+# Change Log
+
+## 0.1.0
+
+- Split voice capabilities into a standalone development source project.
+- Packaged ASR CLI wrappers, Kokoro TTS, IndexTTS2 warmed service wrappers,
+  desktop pet speech routing, QQ voice notification, and the `voice-stack` skill.
+- Documented libraries, external model boundaries, and generated-audio storage.
+- Added install and check scripts so this source tree can promote its files into
+  a local `.codex` installation.
+
