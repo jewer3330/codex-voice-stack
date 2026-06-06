@@ -10,3 +10,6 @@
   a local `.codex` installation.
 - Made install docs and wrapper defaults portable by using `$HOME/.codex` and
   `$HOME/.codex/servers` unless overridden by environment variables.
+- Added a PowerShell installer for Windows file installation.
+- Installers now copy the full plugin source into `.codex/plugins/codex-voice-stack`
+  and register it in the personal Codex marketplace.

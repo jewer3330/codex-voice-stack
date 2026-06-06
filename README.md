@@ -18,8 +18,16 @@ editable source separate from installed `.codex/bin` wrappers and the installed
 
 ## Install
 
+macOS/Linux/WSL/Git Bash:
+
 ```bash
 scripts/install-to-codex.sh
+```
+
+Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install-to-codex.ps1
 ```
 
 Runtime models, generated audio, samples, ASR service state, and logs stay under
@@ -32,6 +40,24 @@ root:
 ```bash
 CODEX_HOME=/path/to/.codex CODEX_SERVER_ROOT=/path/to/servers scripts/install-to-codex.sh
 ```
+
+The installer copies source-controlled files into `.codex/bin`,
+`.codex/skills/voice-stack`, `.codex/plugins/codex-voice-stack`, and the
+personal marketplace file.
+
+## Marketplace
+
+Install scripts register this plugin in the personal Codex marketplace at
+`${CODEX_MARKETPLACE_FILE:-$CODEX_HOME/.agents/plugins/marketplace.json}` with
+source path `./plugins/codex-voice-stack`.
+
+## Windows Notes
+
+Windows installation is supported. Runtime support is mixed: Python helpers can
+run on Windows when their Python libraries are installed, while shell service
+wrappers, `afplay`, and QQ voice conversion via `afconvert` require macOS,
+Linux, or WSL/Git Bash today. A future ffmpeg route should replace the macOS
+audio conversion dependency.
 
 ## Check
 

@@ -17,6 +17,11 @@ zsh -n \
   "${REPO_ROOT}/scripts/install-to-codex.sh" \
   "${REPO_ROOT}/skills/voice-stack/scripts/check-voice-stack.sh"
 
+if command -v pwsh >/dev/null 2>&1; then
+  pwsh -NoProfile -Command '$tokens=$null; $errors=$null; [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $args[0]), [ref]$tokens, [ref]$errors) > $null; if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }' \
+    "${REPO_ROOT}/scripts/install-to-codex.ps1"
+fi
+
 python3 -m py_compile \
   "${REPO_ROOT}/bin/codex_kokoro_tts.py" \
   "${REPO_ROOT}/bin/index-tts2-service.py"
@@ -25,4 +30,3 @@ python3 -m py_compile \
 "${REPO_ROOT}/bin/voice-asr" --help >/dev/null
 
 echo "codex-voice-stack checks ok"
-

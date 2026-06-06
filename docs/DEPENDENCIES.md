@@ -7,7 +7,8 @@ Default locations are portable: `CODEX_HOME` defaults to `$HOME/.codex` and
 
 - Python 3.10+.
 - Docker Compose for the ASR service wrappers.
-- `curl`, `jq` optional for prettier ASR output, and standard Unix shell tools.
+- `curl`, `jq` optional for prettier ASR output, and standard Unix shell tools for macOS/Linux/WSL wrappers.
+- PowerShell 5+ or PowerShell 7+ for Windows installation.
 - macOS `afconvert` for QQ voice conversion and `afplay` for local playback.
 - Node.js only indirectly through the desktop pet project if `codex-pet-say` is used.
 
