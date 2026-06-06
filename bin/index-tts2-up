@@ -3,7 +3,7 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 codex_home="$(cd "${script_dir}/.." && pwd)"
-server_root="${CODEX_SERVER_ROOT:-/Volumes/ssd/servers}"
+server_root="${CODEX_SERVER_ROOT:-${HOME}/.codex/servers}"
 service_root="${VOICE_TTS_HOME:-${server_root}/voice-tts}"
 codex_bin="${CODEX_BIN_DIR:-${codex_home}/bin}"
 index_repo="${INDEX_TTS_REPO:-${codex_bin}/index-tts}"

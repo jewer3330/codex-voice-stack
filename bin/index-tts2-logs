@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-server_root="${CODEX_SERVER_ROOT:-/Volumes/ssd/servers}"
+server_root="${CODEX_SERVER_ROOT:-${HOME}/.codex/servers}"
 service_root="${VOICE_TTS_HOME:-${server_root}/voice-tts}"
 log_dir="$service_root/logs"
 log_file="$log_dir/index-tts2-service.log"

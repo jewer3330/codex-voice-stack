@@ -19,7 +19,7 @@ from urllib.parse import urlparse
 
 
 DEFAULT_CODEX_HOME = Path(os.environ.get("CODEX_HOME", Path(__file__).resolve().parents[1]))
-DEFAULT_SERVER_ROOT = Path(os.environ.get("CODEX_SERVER_ROOT", "/Volumes/ssd/servers"))
+DEFAULT_SERVER_ROOT = Path(os.environ.get("CODEX_SERVER_ROOT", Path.home() / ".codex" / "servers"))
 DEFAULT_VOICE_TTS_HOME = Path(os.environ.get("VOICE_TTS_HOME", DEFAULT_SERVER_ROOT / "voice-tts"))
 DEFAULT_INDEX_REPO = str(Path(os.environ.get("INDEX_TTS_REPO", DEFAULT_CODEX_HOME / "bin/index-tts")))
 DEFAULT_MODEL_DIR = str(Path(os.environ.get("INDEX_TTS2_MODEL_DIR", DEFAULT_VOICE_TTS_HOME / "models/IndexTeam/IndexTTS-2")))

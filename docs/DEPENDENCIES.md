@@ -1,5 +1,8 @@
 # Dependencies
 
+Default locations are portable: `CODEX_HOME` defaults to `$HOME/.codex` and
+`CODEX_SERVER_ROOT` defaults to `$HOME/.codex/servers`.
+
 ## Runtime
 
 - Python 3.10+.
@@ -26,7 +29,7 @@ It uses the model repo `hexgrad/Kokoro-82M-v1.1-zh` and writes WAV at 24000 Hz.
 - `indextts.infer_v2.IndexTTS2`
 
 The model files are expected under `INDEX_TTS2_MODEL_DIR`, defaulting to
-`/Volumes/ssd/servers/voice-tts/models/IndexTeam/IndexTTS-2`.
+`${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-tts/models/IndexTeam/IndexTTS-2`.
 
 The wrapper can use PyTorch options exposed by IndexTTS2:
 
@@ -41,10 +44,9 @@ The wrapper can use PyTorch options exposed by IndexTTS2:
 
 `voice-asr` talks to an OpenAI-compatible `/v1/audio/transcriptions` endpoint.
 The service itself is compose-managed outside this repo under
-`/Volumes/ssd/servers/voice-asr`.
+`${VOICE_ASR_HOME:-${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-asr}`.
 
 ## QQ Voice
 
 `codex-qq-notify-voice` requires AstrBot OpenAPI with `im` and `file` scopes.
 It converts input audio to mono 16-bit WAV at `CODEX_QQ_VOICE_SAMPLE_RATE`.
-

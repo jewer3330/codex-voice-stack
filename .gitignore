@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.codegraph/
 models/
 outputs/
 samples/
@@ -16,4 +17,3 @@ logs/
 *.pth
 *.gguf
 .DS_Store
-

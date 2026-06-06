@@ -23,7 +23,15 @@ scripts/install-to-codex.sh
 ```
 
 Runtime models, generated audio, samples, ASR service state, and logs stay under
-`/Volumes/ssd/servers/voice-tts` and `/Volumes/ssd/servers/voice-asr`.
+`${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-tts` and
+`${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-asr`.
+
+Use environment variables to install into a different Codex home or service
+root:
+
+```bash
+CODEX_HOME=/path/to/.codex CODEX_SERVER_ROOT=/path/to/servers scripts/install-to-codex.sh
+```
 
 ## Check
 
@@ -39,4 +47,3 @@ not download models.
 Do not commit voice models, prompt samples, generated audio, QQ attachments,
 virtualenvs, service logs, API keys, or tokens. Commit only wrappers, small
 service code, skills, documentation, and installer logic.
-

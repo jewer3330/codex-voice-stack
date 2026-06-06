@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-PET_HOME="${CODEX_DESKTOP_PET_HOME:-/Volumes/ssd/work/codex-desktop-pet}"
+PET_HOME="${CODEX_DESKTOP_PET_HOME:-${HOME}/codex-desktop-pet}"
 NODE_BIN="${NODE:-node}"
 
 cd "$PET_HOME"

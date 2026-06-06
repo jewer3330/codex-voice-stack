@@ -3,14 +3,14 @@
 ## Storage
 
 ```text
-CODEX_HOME=/Volumes/ssd/work/.codex
-CODEX_SERVER_ROOT=/Volumes/ssd/servers
-VOICE_TTS_HOME=/Volumes/ssd/servers/voice-tts
-VOICE_ASR_HOME=/Volumes/ssd/servers/voice-asr
-CODEX_DESKTOP_PET_HOME=/Volumes/ssd/work/codex-desktop-pet
-INDEX_TTS_REPO=/Volumes/ssd/work/.codex/bin/index-tts
-INDEX_TTS2_MODEL_DIR=/Volumes/ssd/servers/voice-tts/models/IndexTeam/IndexTTS-2
-INDEX_TTS2_OUTPUT_DIR=/Volumes/ssd/servers/voice-tts/outputs/index-tts2
+CODEX_HOME=$HOME/.codex
+CODEX_SERVER_ROOT=$HOME/.codex/servers
+VOICE_TTS_HOME=$CODEX_SERVER_ROOT/voice-tts
+VOICE_ASR_HOME=$CODEX_SERVER_ROOT/voice-asr
+CODEX_DESKTOP_PET_HOME=$HOME/codex-desktop-pet
+INDEX_TTS_REPO=$CODEX_HOME/bin/index-tts
+INDEX_TTS2_MODEL_DIR=$VOICE_TTS_HOME/models/IndexTeam/IndexTTS-2
+INDEX_TTS2_OUTPUT_DIR=$VOICE_TTS_HOME/outputs/index-tts2
 ```
 
 Repository files contain wrappers and small bridge scripts only. Runtime data stays under `servers`.
@@ -65,7 +65,7 @@ Required:
 
 ```text
 ASTRBOT_URL=http://127.0.0.1:6185
-ASTRBOT_OPENAPI_KEY_FILE=/Volumes/ssd/servers/astrbot/data/codex_openapi_im.key
+ASTRBOT_OPENAPI_KEY_FILE=$CODEX_SERVER_ROOT/astrbot/data/codex_openapi_im.key
 CODEX_QQ_NOTIFY_UMO=<AstrBot unified message origin>
 ```
 
