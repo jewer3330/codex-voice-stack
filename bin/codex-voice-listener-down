@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -z "${CODEX_HOME:-}" ]]; then
+  CODEX_HOME="$(cd "${SCRIPT_DIR}/.." && pwd)"
+fi
+if [[ -z "${CODEX_SERVER_ROOT:-}" ]]; then
+  if [[ "$CODEX_HOME" == */work/.codex ]]; then
+    CODEX_SERVER_ROOT="$(cd "${CODEX_HOME}/../.." && pwd)/servers"
+  else
+    CODEX_SERVER_ROOT="${CODEX_HOME}/servers"
+  fi
+fi
+
+LISTENER_HOME="${CODEX_VOICE_LISTENER_HOME:-${CODEX_SERVER_ROOT}/codex-voice-listener}"
+PID_FILE="${LISTENER_HOME}/listener.pid"
+
+if [[ ! -f "$PID_FILE" ]]; then
+  echo "codex voice listener is not running"
+  exit 0
+fi
+
+pid="$(cat "$PID_FILE" 2>/dev/null || true)"
+if [[ -z "$pid" ]] || ! kill -0 "$pid" 2>/dev/null; then
+  rm -f "$PID_FILE"
+  echo "codex voice listener is not running"
+  exit 0
+fi
+
+kill "$pid" 2>/dev/null || true
+for _ in {1..30}; do
+  if ! kill -0 "$pid" 2>/dev/null; then
+    rm -f "$PID_FILE"
+    echo "codex voice listener stopped"
+    exit 0
+  fi
+  sleep 0.2
+done
+
+kill -9 "$pid" 2>/dev/null || true
+rm -f "$PID_FILE"
+echo "codex voice listener force-stopped"

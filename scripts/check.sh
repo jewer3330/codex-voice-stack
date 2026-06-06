@@ -4,6 +4,13 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 zsh -n \
+  "${REPO_ROOT}/bin/codex-voice-listener" \
+  "${REPO_ROOT}/bin/codex-voice-listener-setup" \
+  "${REPO_ROOT}/bin/codex-voice-listener-up" \
+  "${REPO_ROOT}/bin/codex-voice-listener-down" \
+  "${REPO_ROOT}/bin/codex-voice-listener-logs" \
+  "${REPO_ROOT}/bin/codex-voice-listener-status" \
+  "${REPO_ROOT}/bin/codex-listen-once" \
   "${REPO_ROOT}/bin/voice-asr" \
   "${REPO_ROOT}/bin/voice-asr-up" \
   "${REPO_ROOT}/bin/voice-asr-down" \
@@ -23,9 +30,11 @@ if command -v pwsh >/dev/null 2>&1; then
 fi
 
 python3 -m py_compile \
+  "${REPO_ROOT}/bin/codex_realtimestt_listener.py" \
   "${REPO_ROOT}/bin/codex_kokoro_tts.py" \
   "${REPO_ROOT}/bin/index-tts2-service.py"
 
+"${REPO_ROOT}/bin/codex_realtimestt_listener.py" --help >/dev/null
 "${REPO_ROOT}/bin/index-tts2-service.py" --help >/dev/null
 "${REPO_ROOT}/bin/voice-asr" --help >/dev/null
 

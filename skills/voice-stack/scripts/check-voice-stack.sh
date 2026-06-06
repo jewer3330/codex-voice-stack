@@ -7,6 +7,12 @@ SERVER_ROOT="${CODEX_SERVER_ROOT:-${HOME}/.codex/servers}"
 VOICE_TTS_HOME="${VOICE_TTS_HOME:-${SERVER_ROOT}/voice-tts}"
 
 required=(
+  "$CODEX_HOME/bin/codex-voice-listener"
+  "$CODEX_HOME/bin/codex-voice-listener-setup"
+  "$CODEX_HOME/bin/codex-voice-listener-up"
+  "$CODEX_HOME/bin/codex-voice-listener-down"
+  "$CODEX_HOME/bin/codex-voice-listener-status"
+  "$CODEX_HOME/bin/codex-listen-once"
   "$CODEX_HOME/bin/codex-pet-say"
   "$CODEX_HOME/bin/codex_kokoro_tts.py"
   "$CODEX_HOME/bin/codex-qq-notify-voice"
@@ -25,6 +31,7 @@ for path in "${required[@]}"; do
 done
 
 mkdir -p "$VOICE_TTS_HOME/outputs/index-tts2" "$VOICE_TTS_HOME/logs"
+"$CODEX_HOME/bin/codex-voice-listener" doctor >/dev/null || true
 "$CODEX_HOME/bin/index-tts2-service.py" --help >/dev/null
 "$CODEX_HOME/bin/voice-asr" --help >/dev/null
 

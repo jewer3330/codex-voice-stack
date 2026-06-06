@@ -11,6 +11,7 @@ Default locations are portable: `CODEX_HOME` defaults to `$HOME/.codex` and
 - PowerShell 5+ or PowerShell 7+ for Windows installation.
 - macOS `afconvert` for QQ voice conversion and `afplay` for local playback.
 - Node.js only indirectly through the desktop pet project if `codex-pet-say` is used.
+- Python 3.11+ for the optional RealtimeSTT microphone listener runtime.
 
 Docker is not required to install this plugin. It is only needed when the chosen
 ASR or TTS runtime is deployed through Docker Compose.
@@ -49,6 +50,25 @@ The wrapper can use PyTorch options exposed by IndexTTS2:
 `voice-asr` talks to an OpenAI-compatible `/v1/audio/transcriptions` endpoint.
 The service itself is compose-managed outside this repo under
 `${VOICE_ASR_HOME:-${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-asr}`.
+
+## RealtimeSTT Listener
+
+`codex-voice-listener-setup` creates a service-owned virtual environment under
+`${CODEX_VOICE_LISTENER_HOME:-${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/codex-voice-listener}/.venv`
+and installs:
+
+- `RealtimeSTT[faster-whisper]`
+
+RealtimeSTT requires Python 3.11+ and a working microphone backend. On macOS,
+install PortAudio first when PyAudio cannot build:
+
+```bash
+brew install portaudio
+```
+
+The default transcription model is `base`, language `zh`, compute type `int8`.
+Downloaded models, transcripts, logs, PID files, and state stay under
+`CODEX_VOICE_LISTENER_HOME`.
 
 ## QQ Voice
 

@@ -12,6 +12,8 @@ editable source separate from installed `.codex/bin` wrappers and the installed
 - Added `index-tts2-service.py` and wrappers for a warmed IndexTTS2 HTTP service.
 - Added `codex-pet-say` for desktop Live2D pet speech routing.
 - Added `codex-qq-notify-voice` for QQ voice message delivery through AstrBot.
+- Added RealtimeSTT microphone wrappers for `小莫小莫 -> Codex -> local speech`
+  flows while keeping the listener as an explicitly started/stopped process.
 - Added the reusable `voice-stack` skill and route check script.
 - Made service roots configurable through `CODEX_SERVER_ROOT`, `VOICE_TTS_HOME`,
   `VOICE_ASR_HOME`, `CODEX_DESKTOP_PET_HOME`, and IndexTTS2 environment vars.
@@ -39,6 +41,19 @@ ASR service state, and logs stay under
 `${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-tts` and
 `${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-asr`, or the corresponding
 environment-variable overrides.
+
+For local microphone wake/listen, run setup only when needed:
+
+```bash
+codex-voice-listener-setup
+codex-listen-once
+codex-voice-listener-up --dispatch codex --reply "{reply}"
+codex-voice-listener-status
+codex-voice-listener-down
+```
+
+The RealtimeSTT runtime venv, model cache, logs, PID files, and transcripts stay
+under `${CODEX_VOICE_LISTENER_HOME:-${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/codex-voice-listener}`.
 
 Use environment variables to install into a different Codex home or service
 root:

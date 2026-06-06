@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -z "${CODEX_HOME:-}" ]]; then
+  CODEX_HOME="$(cd "${SCRIPT_DIR}/.." && pwd)"
+fi
+if [[ -z "${CODEX_SERVER_ROOT:-}" ]]; then
+  if [[ "$CODEX_HOME" == */work/.codex ]]; then
+    CODEX_SERVER_ROOT="$(cd "${CODEX_HOME}/../.." && pwd)/servers"
+  else
+    CODEX_SERVER_ROOT="${CODEX_HOME}/servers"
+  fi
+fi
+export CODEX_HOME CODEX_SERVER_ROOT
+
+LISTENER_HOME="${CODEX_VOICE_LISTENER_HOME:-${CODEX_SERVER_ROOT}/codex-voice-listener}"
+
+mkdir -p "$LISTENER_HOME"
+exec "${PYTHON:-python3}" "$SCRIPT_DIR/codex_realtimestt_listener.py" setup "$@"

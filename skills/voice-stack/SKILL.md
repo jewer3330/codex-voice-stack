@@ -15,6 +15,8 @@ Use this skill when the user asks Codex to speak, listen, transcribe audio, send
 - Open-source local TTS draft: `${CODEX_HOME:-$HOME/.codex}/bin/codex_kokoro_tts.py`.
 - Warm mature TTS service: `index-tts2-up`, then `index-tts2-say "text"`.
 - Speech-to-text: `voice-asr FILE` after `voice-asr-up`.
+- One-shot microphone dictation: `codex-listen-once` after `codex-voice-listener-setup`.
+- Wake phrase listener service: `codex-voice-listener-up`, `codex-voice-listener-status`, `codex-voice-listener-down`.
 
 Read `references/voice-routes.md` for paths, service contracts, and packaging details.
 
@@ -50,6 +52,24 @@ ${CODEX_HOME:-$HOME/.codex}/bin/voice-asr /absolute/path/input.wav
 
 Use `--raw` for raw JSON and `--language auto` when language is unknown.
 
+## Local Microphone Listener
+
+RealtimeSTT route for "小莫小莫 -> Codex -> local speech reply":
+
+```bash
+${CODEX_HOME:-$HOME/.codex}/bin/codex-voice-listener-setup
+${CODEX_HOME:-$HOME/.codex}/bin/codex-listen-once
+${CODEX_HOME:-$HOME/.codex}/bin/codex-voice-listener-up --dispatch codex --reply "{reply}"
+${CODEX_HOME:-$HOME/.codex}/bin/codex-voice-listener-status
+${CODEX_HOME:-$HOME/.codex}/bin/codex-voice-listener-down
+```
+
+The first version listens continuously, transcribes utterances with
+RealtimeSTT, and treats configured wake phrases such as `小莫` and `小莫小莫`
+as activation text. Use `CODEX_VOICE_LISTENER_WAKE_PHRASES` to override the
+comma-separated phrase list. When a trained OpenWakeWord model is available,
+pass it through the RealtimeSTT wrapper instead of text matching.
+
 ## Desktop Pet
 
 Use the desktop pet route when the user expects Codex's visible avatar to speak:
@@ -64,6 +84,7 @@ Wake/listen wrappers live beside it: `codex-pet-wake-up`, `codex-pet-wake-down`,
 
 - Keep wrappers, service scripts, and skills under `${CODEX_HOME:-$HOME/.codex}`.
 - Keep voice services, models, prompts, generated wavs, and logs under `${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-tts` or `${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-asr`.
+- Keep RealtimeSTT microphone listener venvs, model cache, logs, PID files, and transcripts under `${CODEX_VOICE_LISTENER_HOME:-${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/codex-voice-listener}`.
 - Keep desktop pet source under `${CODEX_DESKTOP_PET_HOME:-$HOME/codex-desktop-pet}`; persistent pet data can live under `${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/codex-desktop-pet`.
 - Do not commit model checkpoints, generated audio, virtualenvs, voice samples, QQ attachments, or API keys.
 

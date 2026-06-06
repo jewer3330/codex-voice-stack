@@ -7,6 +7,7 @@ CODEX_HOME=$HOME/.codex
 CODEX_SERVER_ROOT=$HOME/.codex/servers
 VOICE_TTS_HOME=$CODEX_SERVER_ROOT/voice-tts
 VOICE_ASR_HOME=$CODEX_SERVER_ROOT/voice-asr
+CODEX_VOICE_LISTENER_HOME=$CODEX_SERVER_ROOT/codex-voice-listener
 CODEX_DESKTOP_PET_HOME=$HOME/codex-desktop-pet
 INDEX_TTS_REPO=$CODEX_HOME/bin/index-tts
 INDEX_TTS2_MODEL_DIR=$VOICE_TTS_HOME/models/IndexTeam/IndexTTS-2
@@ -57,6 +58,29 @@ voice-asr-down
 
 `voice-asr` calls an OpenAI-compatible `/v1/audio/transcriptions` endpoint. Use `VOICE_ASR_BASE_URL`, `VOICE_ASR_API_KEY`, `VOICE_ASR_MODEL`, and `VOICE_ASR_LANGUAGE` to override defaults.
 
+## Microphone Wake And Listen
+
+RealtimeSTT wrappers keep microphone work local and CLI-oriented:
+
+```bash
+codex-voice-listener-setup
+codex-listen-once
+codex-voice-listener-up --dispatch codex --reply "{reply}"
+codex-voice-listener-status
+codex-voice-listener-logs
+codex-voice-listener-down
+```
+
+`codex-listen-once` records one utterance and exits. `codex-voice-listener-up`
+starts a managed background loop that transcribes utterances and activates when
+the transcript contains a configured wake phrase, defaulting to `小莫`,
+`小莫小莫`, `小茉`, and `茉茉`.
+
+Runtime venv, model downloads, logs, PID files, state, and transcript events
+stay under `CODEX_VOICE_LISTENER_HOME`. The base plugin installer only copies
+wrappers; `codex-voice-listener-setup` installs RealtimeSTT into that runtime
+home on demand.
+
 ## QQ Voice
 
 `codex-qq-notify-voice` uploads a local audio file to AstrBot OpenAPI and sends it as a QQ voice record. It converts audio through `afconvert` to mono 16-bit WAV at `CODEX_QQ_VOICE_SAMPLE_RATE`.
@@ -77,5 +101,6 @@ The OpenAPI key needs `im` and `file` scopes.
 - [ ] No model directories, virtualenvs, or checkpoints staged.
 - [ ] `index-tts2-service.py --help` works.
 - [ ] `voice-asr --help` works.
+- [ ] `codex_realtimestt_listener.py --help` works.
 - [ ] `codex-pet-say` remains configurable with `CODEX_DESKTOP_PET_HOME`.
 - [ ] Secret scan finds no API keys, QQ tokens, or GitHub tokens in tracked files.

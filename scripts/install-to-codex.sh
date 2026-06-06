@@ -19,6 +19,14 @@ rsync -a --delete \
   "${REPO_ROOT}/" "${CODEX_PLUGIN_DIR}/"
 
 chmod +x \
+  "${CODEX_HOME}/bin/codex_realtimestt_listener.py" \
+  "${CODEX_HOME}/bin/codex-voice-listener" \
+  "${CODEX_HOME}/bin/codex-voice-listener-setup" \
+  "${CODEX_HOME}/bin/codex-voice-listener-up" \
+  "${CODEX_HOME}/bin/codex-voice-listener-down" \
+  "${CODEX_HOME}/bin/codex-voice-listener-logs" \
+  "${CODEX_HOME}/bin/codex-voice-listener-status" \
+  "${CODEX_HOME}/bin/codex-listen-once" \
   "${CODEX_HOME}/bin/voice-asr" \
   "${CODEX_HOME}/bin/voice-asr-up" \
   "${CODEX_HOME}/bin/voice-asr-down" \

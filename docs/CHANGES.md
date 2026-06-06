@@ -15,3 +15,6 @@
   and register it in the personal Codex marketplace.
 - Made install lightweight: voice runtime directories are created by service
   setup/start commands, not by the base plugin installer.
+- Added RealtimeSTT-based microphone wrappers for one-shot listening and a
+  managed wake phrase loop: `codex-voice-listener-setup`,
+  `codex-listen-once`, `codex-voice-listener-up`, status, logs, and down.
