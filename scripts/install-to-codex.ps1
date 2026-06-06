@@ -10,10 +10,8 @@ $BinDir = Join-Path $CodexHome "bin"
 $SkillsDir = Join-Path $CodexHome "skills"
 $PluginRoot = Join-Path $CodexHome "plugins"
 $CodexPluginDir = Join-Path $PluginRoot "codex-voice-stack"
-$VoiceTtsRoot = Join-Path $CodexServerRoot "voice-tts"
-$VoiceAsrRoot = Join-Path $CodexServerRoot "voice-asr"
 
-New-Item -ItemType Directory -Force -Path $BinDir, $SkillsDir, $PluginRoot, $VoiceTtsRoot, $VoiceAsrRoot, (Split-Path -Parent $MarketplaceFile) | Out-Null
+New-Item -ItemType Directory -Force -Path $BinDir, $SkillsDir, $PluginRoot, (Split-Path -Parent $MarketplaceFile) | Out-Null
 
 Copy-Item -Recurse -Force (Join-Path $RepoRoot "bin\*") $BinDir
 
@@ -45,8 +43,19 @@ $entry = [pscustomobject]@{
   policy = [pscustomobject]@{ installation = "AVAILABLE"; authentication = "ON_INSTALL" }
   category = "Productivity"
 }
-$plugins = @($marketplace.plugins | Where-Object { $_.name -ne $entry.name })
-$marketplace.plugins = @($plugins + $entry)
+$plugins = @($marketplace.plugins)
+$updated = $false
+for ($i = 0; $i -lt $plugins.Count; $i++) {
+  if ($plugins[$i].name -eq $entry.name) {
+    $plugins[$i] = $entry
+    $updated = $true
+    break
+  }
+}
+if (-not $updated) {
+  $plugins += $entry
+}
+$marketplace.plugins = @($plugins)
 $marketplace | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 -Path $MarketplaceFile
 
 Write-Host "Installed Codex voice stack source into $CodexHome"

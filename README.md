@@ -30,9 +30,15 @@ Windows PowerShell:
 powershell -ExecutionPolicy Bypass -File scripts/install-to-codex.ps1
 ```
 
-Runtime models, generated audio, samples, ASR service state, and logs stay under
+The install script is lightweight: it copies source-controlled wrappers, skills,
+plugin source, and marketplace metadata. It does not require Docker, download
+models, install voice engines, or create service runtime data by default.
+
+When you enable local voice services, runtime models, generated audio, samples,
+ASR service state, and logs stay under
 `${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-tts` and
-`${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-asr`.
+`${CODEX_SERVER_ROOT:-$HOME/.codex/servers}/voice-asr`, or the corresponding
+environment-variable overrides.
 
 Use environment variables to install into a different Codex home or service
 root:
@@ -56,8 +62,9 @@ source path `./plugins/codex-voice-stack`.
 Windows installation is supported. Runtime support is mixed: Python helpers can
 run on Windows when their Python libraries are installed, while shell service
 wrappers, `afplay`, and QQ voice conversion via `afconvert` require macOS,
-Linux, or WSL/Git Bash today. A future ffmpeg route should replace the macOS
-audio conversion dependency.
+Linux, or WSL/Git Bash today. Docker is optional and only needed for a chosen
+ASR/TTS service deployment that uses Docker. A future ffmpeg route should
+replace the macOS audio conversion dependency.
 
 ## Check
 

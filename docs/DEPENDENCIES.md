@@ -12,6 +12,9 @@ Default locations are portable: `CODEX_HOME` defaults to `$HOME/.codex` and
 - macOS `afconvert` for QQ voice conversion and `afplay` for local playback.
 - Node.js only indirectly through the desktop pet project if `codex-pet-say` is used.
 
+Docker is not required to install this plugin. It is only needed when the chosen
+ASR or TTS runtime is deployed through Docker Compose.
+
 ## Kokoro TTS
 
 `codex_kokoro_tts.py` imports:

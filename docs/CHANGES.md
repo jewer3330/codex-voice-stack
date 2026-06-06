@@ -13,3 +13,5 @@
 - Added a PowerShell installer for Windows file installation.
 - Installers now copy the full plugin source into `.codex/plugins/codex-voice-stack`
   and register it in the personal Codex marketplace.
+- Made install lightweight: voice runtime directories are created by service
+  setup/start commands, not by the base plugin installer.
